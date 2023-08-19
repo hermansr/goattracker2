@@ -13,7 +13,8 @@ Command quick reference by Simon Bennett.
 Patches and further development by Stefan A. Haubenthal, Valerio Cannone, Raine M. Ekman,
 Tero Lindeman, Henrik Paulini and Groepaz.  
 Microtonal support by Birgit Jauernig.  
-Silver Fork fixes and additions by [Joel Ricci](https://github.com/joelricci)
+Silver Fork fixes and additions by [Joel Ricci](https://github.com/joelricci).
+Further additions by [Roland Hermans](https://github.com/hermansr).
 
 ---
 Distributed under GNU General Public License
@@ -40,3 +41,5 @@ Additional changes in this fork:
 - Better support for some USB keyboards (unwanted characters)
 - Build instructions for MacOS (see separate [txt file](../build_instructions_macos.txt))
 - Builds on Intel macOS 11 and later
+- Use latest reSID as included in VICE
+- Add SID visualizations to status bar
