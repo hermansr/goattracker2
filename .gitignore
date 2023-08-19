@@ -1,3 +1,6 @@
 .vscode/
 linux/
 *.o
+
+src/bme/dat2inc
+src/bme/datafile
