@@ -1,5 +1,5 @@
 //
-// GOATTRACKER v2.76
+// GOATTRACKER v2.76+
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ char instrpath[MAX_PATHNAME];
 char packedpath[MAX_PATHNAME];
 
 extern char *notename[];
-char *programname = "$VER: GoatTracker v2.76";
+char *programname = "$VER: GoatTracker v2.76+";
 char specialnotenames[186];
 char scalatuningfilepath[MAX_PATHNAME];
 char tuningname[64];
