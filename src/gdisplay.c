@@ -6,6 +6,8 @@
 
 #include "goattrk2.h"
 
+#include <math.h>
+
 char *notename[] =
  {"C-0", "C#0", "D-0", "D#0", "E-0", "F-0", "F#0", "G-0", "G#0", "A-0", "A#0", "B-0",
   "C-1", "C#1", "D-1", "D#1", "E-1", "F-1", "F#1", "G-1", "G#1", "A-1", "A#1", "B-1",
@@ -21,6 +23,8 @@ char timechar[] = {':', ' '};
 int timemin = 0;
 int timesec = 0;
 int timeframe = 0;
+static int displaymode = 1;
+static int showvisuals = 1;
 
 void printmainscreen(void)
 {
@@ -39,6 +43,23 @@ void displayupdate(void)
   }
   printstatus();
   fliptoscreen();
+}
+
+void displaysetshowvisuals(int visuals)
+{
+  showvisuals = visuals;
+  if (!visuals)
+  {
+    printblank(20, 35, 58);
+    printblank(20, 36, 58);
+  }
+}
+
+void displaynextmode(void)
+{
+  displaymode = (displaymode + 1) % 4;
+  printblank(20, 35, 58);
+  printblank(20, 36, 58);
 }
 
 void printstatus(void)
@@ -491,6 +512,92 @@ void printstatus(void)
   }
 
   printtext(10, 36, CEDIT, textbuffer);
+
+  if (showvisuals)
+  {
+    static const int numsidvoices = 3;
+    SID_STATE state;
+    sid_readstate(&state);
+
+    if (displaymode == 1)
+    {
+      int c;
+      for (c = 0; c < numsidvoices; c++)
+      {
+        int env = state.voice[c].envelope_counter;
+        int len = env / 16;
+        sprintf(textbuffer, "CHN%d Envelope", c + 1);
+        printtext(20 + (c * 19), 35, CTITLE, textbuffer);
+        sprintf(textbuffer, "%02X %.*s%*s", env, len, "###############",
+          15 - len, "");
+        printtext(20 + (c * 19), 36, CEDIT, textbuffer);
+      }
+    }
+    else if (displaymode == 2)
+    {
+      int c;
+      for (c = 0; c < numsidvoices; c++)
+      {
+        unsigned int freq = state.voice[c].freq;
+        unsigned int pulse = state.voice[c].pulse;
+        unsigned int adsr = state.voice[c].adsr;
+        unsigned char wave = state.voice[c].wave;
+        sprintf(textbuffer, "CHN%d Voice", c + 1);
+        printtext(20 + (c * 19), 35, CTITLE, textbuffer);
+        sprintf(textbuffer, "%04X %04X %02X %04X", freq, pulse, wave, adsr);
+        printtext(20 + (c * 19), 36, CEDIT, textbuffer);
+      }
+    }
+    else if (displaymode == 3)
+    {
+      const double fclk = ntsc ? NTSCCLOCKRATE : PALCLOCKRATE;
+      int c;
+      for (c = 0; c < numsidvoices; c++)
+      {
+        int note = 94;  /* --- */
+        char detune = ' ';
+        int fn = state.voice[c].freq;
+        double fout = (double)fn * fclk / 16777216;
+        if (fout > 0)
+        {
+          int a4offs = round(12.0 * log2(fout / 440.0));
+          note = a4offs + 57;
+          if ((note < 0) || (note >= 93))
+          {
+            note = 94;  /* --- */
+          }
+          else
+          {
+            // Instead of calculating the exact frequency register values for
+            // the note, use the frequency lookup tables of the player. This
+            // prevents the occurence of unwanted detune indicators.
+            //
+            // The exact frequency register values can be calculated like this:
+            // double fout_tuned = 440.0 * pow(2, a4offs / 12.0);
+            // int fn_tuned = round(fout_tuned * 16777216 / fclk);
+            int fn_tuned = (freqtblhi[note] << 8) + freqtbllo[note];
+            if (fn > fn_tuned)
+            {
+              detune = '+';
+            }
+            else if (fn < fn_tuned)
+            {
+              detune = '-';
+            }
+          }
+        }
+        sprintf(textbuffer, "CHN%d Note", c + 1);
+        printtext(20 + (c * 16), 35, CTITLE, textbuffer);
+        sprintf(textbuffer, "%-3s%c%7.2f Hz", notename[note], detune, fout);
+        printtext(20 + (c * 16), 36, CEDIT, textbuffer);
+      }
+
+      printtext(68, 35, CTITLE, "FC RR MV");
+      sprintf(textbuffer, "%02X %02X %02X", state.filter_cutoff >> 4,
+        state.filter_res_rout, state.filter_mode_volume);
+      printtext(68, 36, CEDIT, textbuffer);
+    }
+  }
 
   printtext(80, 35, CTITLE, " CHN1   CHN2   CHN3 ");
   for (c = 0; c < MAX_CHN; c++)

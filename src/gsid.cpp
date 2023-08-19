@@ -194,3 +194,23 @@ int sid_fillbuffer(short *ptr, int samples)
   return total;
 }
 
+void sid_readstate(SID_STATE* state)
+{
+  reSID::SID::State st;
+  if (sid) st = sid->read_state();
+  // if (sidfp) state = sid->read_state();
+
+  int i;
+  for (i = 0; i < 3; i++)
+  {
+    int offs = 7 * i;
+    state->voice[i].freq = ((unsigned char)st.sid_register[offs + 1] << 8) + (unsigned char)st.sid_register[offs];
+    state->voice[i].pulse = ((unsigned char)st.sid_register[offs + 3] << 8) + (unsigned char)st.sid_register[offs + 2];
+    state->voice[i].adsr = ((unsigned char)st.sid_register[offs + 5] << 8) + (unsigned char)st.sid_register[offs + 6];
+    state->voice[i].wave = (unsigned char)st.sid_register[offs + 4];
+    state->voice[i].envelope_counter = st.envelope_counter[i];
+  }
+  state->filter_cutoff = ((unsigned char)st.sid_register[0x16] << 4) + ((unsigned char)st.sid_register[0x15] & 0xf);
+  state->filter_res_rout = (unsigned char)st.sid_register[0x17];
+  state->filter_mode_volume = (unsigned char)st.sid_register[0x18];
+}

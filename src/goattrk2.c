@@ -1113,6 +1113,11 @@ void generalcommands(void)
     case KEY_F11:
     save();
     break;
+
+    case KEY_D:
+    if (shiftpressed)
+      displaynextmode();
+    break;
   }
 }
 
@@ -1197,9 +1202,11 @@ void quit(void)
 {
   if ((!shiftpressed) || (mouseb))
   {
+    displaysetshowvisuals(0);
     printtextcp(49, 36, 15, "Really Quit (y/n)?");
     waitkey();
     printblank(20, 36, 58);
+    displaysetshowvisuals(1);
     if ((key == 'y') || (key == 'Y')) exitprogram = 1;
   }
   key = 0;
@@ -1214,6 +1221,7 @@ void clear(void)
   int ct = 0;
   int cn = 0;
 
+  displaysetshowvisuals(0);
   printtextcp(49, 36, 15, "Optimize everything (y/n)?");
   waitkey();
   printblank(20, 36, 58);
@@ -1222,6 +1230,7 @@ void clear(void)
     optimizeeverything(1, 1);
     key = 0;
     rawkey = 0;
+    displaysetshowvisuals(1);
     return;
   }
 
@@ -1296,6 +1305,7 @@ void clear(void)
 
   key = 0;
   rawkey = 0;
+  displaysetshowvisuals(1);
 }
 
 void editadsr(void)
