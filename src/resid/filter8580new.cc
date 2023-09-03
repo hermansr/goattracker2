@@ -176,7 +176,7 @@ typedef struct {
   bool dac_term;
 } model_filter_init_t;
 
-static model_filter_init_t model_filter_init[2] = {
+static const model_filter_init_t model_filter_init[2] = {
   {
     opamp_voltage_6581,
     sizeof(opamp_voltage_6581)/sizeof(*opamp_voltage_6581),
@@ -263,7 +263,7 @@ Filter::Filter()
     opamp_t* opamp = new opamp_t[1 << 16];
 
     for (int m = 0; m < 2; m++) {
-      model_filter_init_t& fi = model_filter_init[m];
+      const model_filter_init_t& fi = model_filter_init[m];
       model_filter_t& mf = model_filter[m];
 
       // Convert op-amp voltage transfer to 16 bit values.
@@ -651,7 +651,7 @@ void Filter::adjust_filter_bias(double dac_bias)
 
   // Gate voltage is controlled by the switched capacitor voltage divider
   // Ua = Ue * v = 4.75v  1<v<2
-  model_filter_init_t& fi = model_filter_init[1];
+  const model_filter_init_t& fi = model_filter_init[1];
   double Vg = Vref * (dac_bias*6./100. + 1.6);
   double Vgt = Vg - fi.Vth;
   double vmin = fi.opamp_voltage[0][0];
