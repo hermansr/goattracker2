@@ -1,6 +1,4 @@
 .vscode/
-linux/
-*.o
-
-src/bme/dat2inc
-src/bme/datafile
+build/
+build-win32/
+build-win64/
