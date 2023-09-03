@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <SDL/SDL_types.h>
+#include "SDL_types.h"
 #include "bme_end.h"
 
 #define MAXFILES 16384
@@ -76,7 +76,7 @@ int main(int argc, char **argv)
 
             for (c = strlen(fullname[files]) - 1; c >= 0; c--)
             {
-                if (fullname[files][c] == '\\')
+                if ((fullname[files][c] == '\\') || (fullname[files][c] == '/'))
                 {
                     c++;
                     break;
