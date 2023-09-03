@@ -2007,4 +2007,6 @@ Unofficial fixes:
           - Better support for some USB keyboards (unwanted characters)
           - Build instructions for MacOS (see separate txt file)
           - Builds on macOS 11 and later
+          - Use latest reSID as included in VICE
+          - Add SID visualizations to status bar
           - Use CMake-based buildsystem
