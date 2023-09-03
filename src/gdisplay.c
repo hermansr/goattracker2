@@ -526,7 +526,7 @@ void printstatus(void)
       {
         int env = state.voice[c].envelope_counter;
         int len = env / 16;
-        sprintf(textbuffer, "CHN%d Envelope", c + 1);
+        sprintf(textbuffer, "CHN%d ENVELOPE", c + 1);
         printtext(20 + (c * 19), 35, CTITLE, textbuffer);
         sprintf(textbuffer, "%02X %.*s%*s", env, len, "###############",
           15 - len, "");
@@ -542,7 +542,7 @@ void printstatus(void)
         unsigned int pulse = state.voice[c].pulse;
         unsigned int adsr = state.voice[c].adsr;
         unsigned char wave = state.voice[c].wave;
-        sprintf(textbuffer, "CHN%d Voice", c + 1);
+        sprintf(textbuffer, "CHN%d REGISTERS", c + 1);
         printtext(20 + (c * 19), 35, CTITLE, textbuffer);
         sprintf(textbuffer, "%04X %04X %02X %04X", freq, pulse, wave, adsr);
         printtext(20 + (c * 19), 36, CEDIT, textbuffer);
@@ -586,7 +586,7 @@ void printstatus(void)
             }
           }
         }
-        sprintf(textbuffer, "CHN%d Note", c + 1);
+        sprintf(textbuffer, "CHN%d NOTE/FREQ", c + 1);
         printtext(20 + (c * 16), 35, CTITLE, textbuffer);
         sprintf(textbuffer, "%-3s%c%7.2f Hz", notename[note], detune, fout);
         printtext(20 + (c * 16), 36, CEDIT, textbuffer);
