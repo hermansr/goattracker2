@@ -462,7 +462,6 @@ void gfx_drawsprite(int x, int y, unsigned num)
     unsigned sprf = num >> 16;
     unsigned spr = (num & 0xffff) - 1;
     SPRITEHEADER *hptr;
-
     Uint8 *sptr;
     Uint8 *dptr;
     int cx;
