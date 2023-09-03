@@ -2003,7 +2003,7 @@ void insertlabel(const char *name)
 {
   char insertbuffer[80];
 
-  sprintf(insertbuffer, "%s:\n", name);
+  sprintf(insertbuffer, "%.77s:\n", name);
   inserttext(insertbuffer);
 }
 
@@ -2050,7 +2050,7 @@ void insertaddrlo(const char *name)
 {
   char insertbuffer[80];
 
-  sprintf(insertbuffer, "                .BYTE (%s %% 256)\n", name);
+  sprintf(insertbuffer, "                .BYTE (%.48s %% 256)\n", name);
   inserttext(insertbuffer);
 }
 
@@ -2058,7 +2058,7 @@ void insertaddrhi(const char *name)
 {
   char insertbuffer[80];
 
-  sprintf(insertbuffer, "                .BYTE (%s / 256)\n", name);
+  sprintf(insertbuffer, "                .BYTE (%.48s / 256)\n", name);
   inserttext(insertbuffer);
 }
 
