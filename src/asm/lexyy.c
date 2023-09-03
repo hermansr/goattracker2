@@ -1,3 +1,4 @@
+#define YY_ECHO
 #define YY_NO_UNPUT
 #define YY_NO_INPUT
 #define YY_NO_TOP_STATE
@@ -636,11 +637,11 @@ YY_MALLOC_DECL
 
 /* Copy whatever the last rule matched to the standard output. */
 
-#ifndef ECHO
+#ifndef YY_ECHO
 /* This used to be an fputs(), but since the string might contain NUL's,
  * we now use fwrite().
  */
-#define ECHO (void) fwrite( yytext, yyleng, 1, yyout )
+#define YY_ECHO (void) fwrite( yytext, yyleng, 1, yyout )
 #endif
 
 /* Gets input and stuffs it into "buf".  number of characters read, or YY_NULL,
@@ -1375,7 +1376,7 @@ case YY_STATE_EOF(MACROO):
 case 111:
 YY_RULE_SETUP
 // #line 188 "asm.yy"
-ECHO;
+YY_ECHO;
 	YY_BREAK
 // #line 1375 "lex.yy.c"
 
