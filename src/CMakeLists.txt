@@ -1,51 +1,8 @@
 cmake_minimum_required(VERSION 3.19)
 
-find_package(SDL)
-if(NOT SDL_FOUND)
-  # e.g. Fedora 38 does not provide a SDL CMake config file for MingW64
-  message(STATUS "SDL not found using CMake config, falling back to pkg-config")
-  find_package(PkgConfig REQUIRED)
-  pkg_check_modules(SDL REQUIRED sdl)
-endif()
-
-configure_file(config.h.in config.h)
-
-include_directories(asm bme "${CMAKE_CURRENT_BINARY_DIR}" ${SDL_INCLUDE_DIRS})
-add_compile_options(${SDL_CFLAGS_OTHER})
-
-add_library(bme OBJECT
-  bme/bme.c
-  bme/bme_end.c
-  bme/bme_gfx.c
-  bme/bme_io.c
-  bme/bme_kbd.c
-  bme/bme_mou.c
-  bme/bme_snd.c
-  bme/bme_win.c
-)
+configure_file(config.h.in config.h @ONLY)
 
 add_executable(${PROJECT_NAME}
-  asm/asmtab.c
-  asm/chnkpool.c
-  asm/expr.c
-  asm/lexyy.c
-  asm/log.c
-  asm/membuf.c
-  asm/membufio.c
-  asm/namedbuf.c
-  asm/parse.c
-  asm/pc.c
-  asm/vec.c
-  resid/dac.cc
-  resid/envelope.cc
-  resid/extfilt.cc
-  resid/filter8580new.cc
-  # resid/filter.cc
-  resid/pot.cc
-  resid/sid.cc
-  # resid/version.cc
-  resid/voice.cc
-  resid/wave.cc
   gconsole.c
   gdisplay.c
   gfile.c
@@ -62,43 +19,44 @@ add_executable(${PROJECT_NAME}
   gsound.c
   gtable.c
 )
-
-target_link_libraries(${PROJECT_NAME} bme ${SDL_LIBRARIES} ${extra_libs})
-target_link_options(${PROJECT_NAME} PUBLIC ${SDL_LDFLAGS_OTHER})
-if(GT2_BUILD_WIN32)
+if(WIN32)
   target_sources(${PROJECT_NAME} PRIVATE goattrk2.rc)
-  target_link_options(${PROJECT_NAME} PUBLIC -static-libgcc -static-libstdc++ -lssp)
-  # -l ssp is to fix issue #2233205 with MinGW64 on Fedora 38
 endif()
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+target_link_libraries(${PROJECT_NAME} PRIVATE asm bme resid)
+
+add_executable(gt2reloc
+  gt2reloc.c
+  gconsole.c
+  gdisplay.c
+  gfile.c
+  ginstr.c
+  goatdata.c
+  gorder.c
+  gpattern.c
+  gplay.c
+  gsid.cpp
+  gsong.c
+  gsound.c
+  gtable.c
+)
+target_include_directories(gt2reloc PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+target_link_libraries(gt2reloc PRIVATE asm bme resid)
 
 add_executable(ins2snd2
   ins2snd2.c
-  bme/bme_end.c
 )
+target_link_libraries(ins2snd2 PRIVATE bme)
 
 add_executable(mod2sng
   mod2sng.c
-  bme/bme_end.c
 )
+target_link_libraries(mod2sng PRIVATE bme)
 
 add_executable(sngspli2
-  bme/bme_end.c
   sngspli2.c
 )
-
-# only build the generator executables on the native and make them available
-# as a package when cross-compiling
-if(NOT CMAKE_CROSSCOMPILING)
-  add_executable(datafile
-    bme/datafile.c
-    bme/bme_end.c
-  )
-  add_executable(dat2inc
-    bme/dat2inc.c
-  )
-  export(TARGETS datafile dat2inc FILE
-        "${CMAKE_BINARY_DIR}/MyGenConfig.cmake")
-endif()
+target_link_libraries(sngspli2 PRIVATE bme)
 
 set(datasrc
   player.s
@@ -124,6 +82,10 @@ add_custom_command(
   DEPENDS dat2inc goattrk2.dat
   VERBATIM)
 
-install(TARGETS ${PROJECT_NAME} ins2snd2 mod2sng sngspli2
-    EXPORT ${PROJECT_NAME}
+install(TARGETS ${PROJECT_NAME} gt2reloc ins2snd2 mod2sng sngspli2
+  EXPORT ${PROJECT_NAME}
 )
+
+add_subdirectory(asm)
+add_subdirectory(bme)
+add_subdirectory(resid)

@@ -1,5 +1,5 @@
 //
-// GOATTRACKER v2.76+
+// GOATTRACKER
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #endif
 
 #include "goattrk2.h"
+#include "config.h"
 #include "bme.h"
 
 int menu = 0;
@@ -81,7 +82,9 @@ char instrpath[MAX_PATHNAME];
 char packedpath[MAX_PATHNAME];
 
 extern char *notename[];
-char *programname = "$VER: GoatTracker v2.76+";
+#define xstr(s) str(s)
+#define str(s) #s
+char *programname = "$VER: GoatTracker v" xstr(GT2_VERSION_MAJOR) "." xstr(GT2_VERSION_MINOR) "+";
 char specialnotenames[186];
 char scalatuningfilepath[MAX_PATHNAME];
 char tuningname[64];
